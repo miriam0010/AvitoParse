@@ -2,6 +2,7 @@ import requests
 import csv
 from bs4 import BeautifulSoup
 
+
 def get_html(url):
     r = requests.get(url)
     return r.text
@@ -9,7 +10,7 @@ def get_html(url):
 
 def get_pages(html):
     soup = BeautifulSoup(html, 'lxml')
-    pages = soup.find('div',  class_='pagination-pages').find_all('a', class_='pagination-page')[-1].get('href')
+    pages = soup.find('div', class_='pagination-pages').find_all('a', class_='pagination-page')[-1].get('href')
     total_pages = pages.split('=')[1].split('&')[0]
     return int(total_pages)
 
@@ -34,22 +35,22 @@ def get_page_data(html):
 
             try:
                 title = ad.find('div', class_='description').find('h3').text.strip()
-            except:
+            except Exception:
                 title = 'no title!'
 
             try:
                 url = 'https://avito.ru' + ad.find('div', class_='description').find('h3').find('a').get('href')
-            except:
+            except Exception:
                 url = 'no url!'
 
             try:
                 price = ad.find('div', class_='about').text.strip()
-            except:
+            except Exception:
                 price = 'no price!'
 
             try:
                 metro = ad.find('div', class_='data').find_all('p')[-1].text.strip()
-            except:
+            except Exception:
                 metro = 'no metro!'
 
             data = {'title': title,
@@ -70,9 +71,10 @@ def main():
 
     for i in range(1, total_pages + 1):
         url_gen = base_url + page_part + str(i) + query_part
-        #print(url_gen)
+        # print(url_gen)
         html = get_html(url_gen)
         get_page_data(html)
+
 
 if __name__ == '__main__':
     main()
